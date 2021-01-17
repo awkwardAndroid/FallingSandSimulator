@@ -118,9 +118,7 @@ public class SandLab
                 } else if(col > 0 && grid[row+1][col-1] == EMPTY){ // if below is empty and left side is empty
                     grid[row][col] = EMPTY;
                     grid[row+1][col-1] = SAND;
-                }
-
-                if(grid[row+1][col] == WATER){ // if below is water
+                } else if(grid[row+1][col] == WATER){ // if below is water
                     grid[row][col] = WATER;
                     grid[row+1][col] = SAND;
                 } else if(col < numCols-1  && grid[row+1][col+1] == WATER){ // if below is water and right side is water
