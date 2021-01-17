@@ -5,15 +5,15 @@ import java.util.Random;
 import java.util.Scanner;
 import java.io.*;
 
-
 public class SandLab
 {
 
     //particle types
-    public static final int EMPTY = 0;
-    public static final int METAL = 1;
-    public static final int SAND = 2;
-    public static final int WATER = 3;
+    public static final int REMOVEALL = 0;
+    public static final int EMPTY = 1;
+    public static final int METAL = 2;
+    public static final int SAND = 3;
+    public static final int WATER = 4;
 
     //do NOT add any more instance variables
     private int[][] grid;
@@ -31,11 +31,12 @@ public class SandLab
     public SandLab(int numRows, int numCols)
     {
         String[] names;
-        names = new String[4]; // Bad Bad
+        names = new String[5]; // Bad Bad
 
         grid = new int[numRows][numCols];
 
-        names[EMPTY] = "Empty";
+        names[REMOVEALL] = "Remove all";
+        names[EMPTY] = "Eraser";
         names[METAL] = "Metal";
         names[SAND] = "Sand";
         names[WATER] = "Water";
@@ -52,7 +53,6 @@ public class SandLab
                 if(row+x < numRows && col+i < numCols) grid[row+x][col+i] = tool;
             }
         }
-
     }
 
     //copies each element of grid into the display
@@ -62,12 +62,14 @@ public class SandLab
             for(int row = 0; row <= display.getNumRows()-1; row++){
                 int type = grid[row][column];
 
-                if(type == EMPTY){
-                    display.setColor(row,column, Color.BLACK);
+                if(type == REMOVEALL) {
+                    removeAll();
+                } else if(type == EMPTY){
+                    display.setColor(row,column, new Color(28, 28, 28));
                 } else if (type == METAL){
                     display.setColor(row,column, Color.GRAY);
                 } else if(type == SAND){
-                    display.setColor(row,column, Color.YELLOW);
+                    display.setColor(row,column, new Color(245, 245, 110));
                 } else if(type == WATER){
                     display.setColor(row,column, Color.BLUE);
                 }
@@ -80,17 +82,15 @@ public class SandLab
     public void step()
     {
         Random r = new Random();
-        //Random r2 = new Random();
 
         int row = r.nextInt(numRows);
         int col = r.nextInt(numCols);
         int typeAtLocation = grid[row][col];
 
         physics(typeAtLocation,row,col);
-
     }
 
-    //do not modify
+    //Game loop
     public void run()
     {
         while (true)
@@ -99,10 +99,18 @@ public class SandLab
                 step();
             updateDisplay();
             display.repaint();
-            display.pause(1);  //wait for redrawing and for mouse
+            display.pause(1);
             int[] mouseLoc = display.getMouseLocation();
-            if (mouseLoc != null)  //test if mouse clicked
+            if (mouseLoc != null)  // if mouse clicked
                 locationClicked(mouseLoc[0], mouseLoc[1], display.getTool());
+        }
+    }
+
+    public void removeAll(){
+        for(int column = 0; column <= display.getNumCols() - 1; column++) {
+            for (int row = 0; row <= display.getNumRows() - 1; row++) {
+                grid[row][column] = EMPTY;
+            }
         }
     }
 

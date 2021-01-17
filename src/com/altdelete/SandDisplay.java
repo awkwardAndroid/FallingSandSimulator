@@ -18,7 +18,6 @@ public class SandDisplay extends JComponent implements MouseListener,
     private int numCols;
     private int[] mouseLoc;
     private JButton[] buttons;
-    private JSlider slider;
     private int speed;
 
     public SandDisplay(String title, int numRows, int numCols, String[] buttonNames)
@@ -27,10 +26,10 @@ public class SandDisplay extends JComponent implements MouseListener,
         this.numCols = numCols;
         tool = 1;
         mouseLoc = null;
-        speed = computeSpeed(50);
+        speed = 100_000;
 
         //determine cell size
-        cellSize = Math.max(1, 600 / Math.max(numRows, numCols));
+        cellSize = 2; //Math.max(1, 600 / Math.max(numRows, numCols));
         image = new BufferedImage(numCols * cellSize, numRows * cellSize, BufferedImage.TYPE_INT_RGB);
 
         frame = new JFrame(title);
@@ -39,6 +38,7 @@ public class SandDisplay extends JComponent implements MouseListener,
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.LINE_AXIS));
+        topPanel.setBackground(new Color(46, 46, 46));
         frame.getContentPane().add(topPanel);
 
         setPreferredSize(new Dimension(numCols * cellSize, numRows * cellSize));
@@ -48,6 +48,7 @@ public class SandDisplay extends JComponent implements MouseListener,
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+        buttonPanel.setBackground(new Color(46, 46, 46));
         topPanel.add(buttonPanel);
 
         buttons = new JButton[buttonNames.length];
@@ -61,18 +62,6 @@ public class SandDisplay extends JComponent implements MouseListener,
         }
 
         buttons[tool].setSelected(true);
-
-        slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-        slider.addChangeListener(this);
-        slider.setMajorTickSpacing(1);
-        slider.setPaintTicks(true);
-        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        labelTable.put(new Integer(0), new JLabel("Slow"));
-        labelTable.put(new Integer(100), new JLabel("Fast"));
-        slider.setLabelTable(labelTable);
-        slider.setPaintLabels(true);
-
-        frame.getContentPane().add(slider);
 
         frame.pack();
         frame.setVisible(true);
@@ -165,21 +154,13 @@ public class SandDisplay extends JComponent implements MouseListener,
 
     public void stateChanged(ChangeEvent e)
     {
-        speed = computeSpeed(slider.getValue());
+
     }
 
     //returns number of times to step between repainting and processing mouse input
     public int getSpeed()
     {
         return speed;
-    }
-
-    //returns speed based on sliderValue
-    //speed of 0 returns 10^3
-    //speed of 100 returns 10^6
-    private int computeSpeed(int sliderValue)
-    {
-        return (int)Math.pow(10, 0.03 * sliderValue + 3);
     }
 
     public int getNumRows() {
